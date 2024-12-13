@@ -13,41 +13,60 @@ CREATE TABLE pasajero (
     PRIMARY KEY (id),
     KEY (n_planeta),
     KEY (n_p_origen),
-    CONSTRAINT planeta_origen
-        FOREIGN KEY(n_planeta)
+    CONSTRAINT planetas
+        FOREIGN KEY(n_planeta, n_p_origen)
         REFERENCES planeta(nombre)
         ON DELETE NO ACTION
         ON UPDATE CASCADE
-    CONSTRAINT planeta_destino
-        FOREIGN KEY(n_p_origen)
-        REFERENCES planeta(nombre)
-        ON DELETE NO ACTION 
-        ON UPDATE CASCADE 
 );
 CREATE TABLE planeta (
     nombre          VARCHAR(20) NOT NULL, 
     masa            INTEGER     NOT NULL,
     radio           INTEGER     NOT NULL,
-    nombre_sistema  VARCHAR(20) NOT NULL,
-    PRIMARY KEY (nombre)
+    nombre_sist  	VARCHAR(20) NOT NULL,
+    compuesto		VARCHAR(20) 	NOT NULL,
+    PRIMARY KEY (nombre),
+    KEY (nombre_sist),
+    KEY(compuesto),
+    CONSTRAINT sistemas
+		FOREIGN KEY(nombre_sist)
+        REFERENCES sistema(nombre)
+		ON DELETE NO ACTION
+        ON UPDATE CASCADE,
+	CONSTRAINT compuestos
+		FOREIGN KEY (compuesto)
+        REFERENCES 	compuesto(nombre)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
 );
 CREATE TABLE satelite (
-    -- nombre          VARCHAR(20) NOT NULL, 
-    -- masa            INTEGER     NOT NULL,
-    -- radio           INTEGER     NOT NULL,
-    -- nombre_sistema  VARCHAR(20) NOT NULL,
-    -- PRIMARY KEY (nombre)
+    nombre          VARCHAR(20) NOT NULL, 
+    n_sistema  		VARCHAR(20) NOT NULL,
+    n_planeta 		VARCHAR(20) NOT NULL,
+    PRIMARY KEY (nombre),
+    KEY (n_sistema),
+    KEY (n_planeta),
+	CONSTRAINT planeta
+        FOREIGN KEY(n_planeta)
+        REFERENCES planeta(nombre)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE,
+    CONSTRAINT sistemas
+        FOREIGN KEY(n_sistema)
+        REFERENCES sistema(nombre)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE        
 );
 CREATE TABLE sistema (
-    -- nombre          VARCHAR(20) NOT NULL, 
-    -- masa            INTEGER     NOT NULL,
-    -- radio           INTEGER     NOT NULL,
-    -- nombre_sistema  VARCHAR(20) NOT NULL,
--- PRIMARY KEY (nombre))
+    nombre          VARCHAR(20) NOT NULL,
+	PRIMARY KEY (nombre)
 );
-
-CREATE TABLE compuesto ();
-CREATE TABLE elemento_quimico ();
+CREATE TABLE elemento_quimico (
+	nombre			VARCHAR(20) NOT NULL,
+    simbolo			VARCHAR(3) NOT NULL,
+    num_atomico		INTEGER NOT NULL,
+	PRIMARY KEY (nombre)
+);
 CREATE TABLE cabina ();
 CREATE TABLE cubierta();
 
