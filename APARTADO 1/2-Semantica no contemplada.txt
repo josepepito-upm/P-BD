@@ -1,0 +1,3 @@
+-Para que un pasajero pueda tutelar a otro, el que tutela debe ser mayor de edad y el tutelado debe ser menor de edad.
+
+-El número y lado de cabina pueden repetirse siempre y cuando pertenezcan a cubiertas de letra diferente, al igual que el número de cabina se puede repetir siempre y cuando estén en lados diferentes.
