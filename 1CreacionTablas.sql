@@ -85,23 +85,22 @@ CREATE TABLE cabina (
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE cubierta(
+CREATE TABLE cubierta (
 	letra		VARCHAR(1) NOT NULL,
     clase		INTEGER NOT NULL,
-    lado		VARCHAR(1) NOT NULL,
     PRIMARY KEY (letra)
 );
-CREATE TABLE robot(
+CREATE TABLE robot (
 	numero 		INTEGER AUTO_INCREMENT,
     diseño		VARCHAR(30),
     PRIMARY KEY (numero)
 );
-CREATE TABLE mecanico(
+CREATE TABLE mecanico (
 	id			INTEGER AUTO_INCREMENT,
     nombre		VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
-CREATE TABLE reparacion(
+CREATE TABLE reparacion (
 	num_robot	INTEGER NOT NULL,
     id_m		INTEGER NOT NULL,
     fecha		DATETIME NOT NULL,
@@ -117,11 +116,11 @@ CREATE TABLE reparacion(
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE zona_entretenimiento(
+CREATE TABLE zona_entretenimiento (
 	nombre		VARCHAR(30) NOT NULL,
     PRIMARY KEY (nombre)
 );
-CREATE TABLE gasto(
+CREATE TABLE gasto (
 	pasajero	INTEGER NOT NULL,
     n_entretenimiento	VARCHAR(30) NOT NULL,
     cantidad	INTEGER NOT NULL,
@@ -137,7 +136,7 @@ CREATE TABLE gasto(
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE personal_humano(
+CREATE TABLE personal_humano (
 	id		INTEGER AUTO_INCREMENT,
     nombre	VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
