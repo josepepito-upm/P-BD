@@ -1,12 +1,10 @@
-SELECT vip, numero_cabina, lado_cabina, pasajeros.cubierta 
-FROM pasajeros JOIN cabinas c ON pasajeros.numero_cabina = c.numero 
-							AND pasajeros.lado_cabina = c.lado
-                            AND pasajeros.cubierta = c.cubierta
-GROUP BY id
-HAVING COUNT(pasajeros.vip = 0) > 3 AND (SELECT cantidad 
-										FROM gastos JOIN pasajeros p ON gastos.pasajero = p.id LIMIT 1) 
-										> 2*AVG((SELECT SUM(cantidad) 
-												FROM gastos JOIN pasajeros p2 ON gastos.pasajero = p2.id 
-															JOIN cabinas ON p2.numero_cabina = cabinas.numero 
-																		AND p2.lado_cabina = cabinas.lado
-																		AND p2.cubierta = cabinas.cubierta));
+SELECT p.numero_cabina, p.lado_cabina, p.cubierta
+FROM pasajeros p JOIN gastos g ON p.id = g.pasajero
+WHERE p.vip = 0
+AND g.cantidad > (SELECT 2 * AVG(gastos.cantidad)
+		  FROM gastos JOIN pasajeros ON gastos.pasajero = pasajeros.id
+		  WHERE pasajeros.numero_cabina = p.numero_cabina
+		  AND pasajeros.lado_cabina = p.lado_cabina
+		  AND pasajeros.cubierta = p.cubierta)
+GROUP BY p.numero_cabina, p.lado_cabina, p.cubierta
+HAVING COUNT(*) > 3
