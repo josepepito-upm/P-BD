@@ -1,0 +1,44 @@
+DELIMITER $$
+
+CREATE FUNCTION porcentaje_pasajeros(
+    destino_planeta VARCHAR(255), 
+    destino_sistema VARCHAR(255),
+    cubierta CHAR(1)
+) 
+RETURNS DECIMAL(10,2) 
+DETERMINISTIC
+BEGIN
+    DECLARE total_pasajeros INT DEFAULT 0;
+    DECLARE pasajeros_destino INT DEFAULT 0;
+    DECLARE porcentaje DECIMAL(10,2) DEFAULT 0;
+
+    SELECT COUNT(*) 
+    INTO pasajeros_destino
+    FROM pasajeros p JOIN cabinas c ON p.numero_cabina = c.numero
+					 JOIN planetas pl ON p.planeta_destino = pl.nombre
+					 JOIN sistemas s ON pl.sistema = s.nombre
+    WHERE c.cubierta = cubierta AND pl.nombre = destino_planeta AND s.nombre = destino_sistema;
+
+    SELECT COUNT(*) 
+    INTO total_pasajeros
+    FROM pasajeros p JOIN cabinas c ON p.numero_cabina = c.numero
+    WHERE c.cubierta = cubierta;
+
+    IF total_pasajeros IS NULL OR total_pasajeros <= 0 THEN
+        SET porcentaje = 0; 
+    ELSE
+        SET porcentaje = (pasajeros_destino / total_pasajeros) * 100;
+    END IF;
+
+    RETURN porcentaje;
+END$$
+
+DELIMITER ;
+
+SELECT c.cubierta, c.numero, c.lado, porcentaje_pasajeros('55 Cancri e', 'Copernico', c.cubierta) AS porcentaje_ocupacion
+FROM cabinas c JOIN pasajeros p ON p.numero_cabina = c.numero
+			   JOIN planetas pl ON p.planeta_destino = pl.nombre
+			   JOIN sistemas s ON pl.sistema = s.nombre
+WHERE pl.nombre = '55 Cancri e' AND s.nombre = 'Copernico'
+GROUP BY c.cubierta, c.numero, c.lado
+ORDER BY c.cubierta;

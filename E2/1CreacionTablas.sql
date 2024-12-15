@@ -2,6 +2,24 @@ CREATE DATABASE IF NOT EXISTS nave_espacial_titanic
 	DEFAULT CHARACTER SET utf8mb3
     COLLATE utf8mb3_spanish2_ci;
 USE nave_espacial_titanic;
+CREATE TABLE sistema (
+    nombre          VARCHAR(20) UNIQUE NOT NULL,
+	PRIMARY KEY (nombre)
+);
+CREATE TABLE planeta (
+    nombre          VARCHAR(20) NOT NULL, 
+    masa            INTEGER     NOT NULL,
+    radio           INTEGER     NOT NULL,
+    nombre_sist  	VARCHAR(20) NOT NULL,
+    elemento_quimico		VARCHAR(20) 	NOT NULL,
+    PRIMARY KEY (nombre),
+    KEY (nombre_sist),
+    CONSTRAINT sistema
+		FOREIGN KEY(nombre_sist)
+        REFERENCES sistema(nombre)
+		ON DELETE NO ACTION
+        ON UPDATE CASCADE
+);
 CREATE TABLE pasajero (
 	id			INTEGER     AUTO_INCREMENT,
     nombre		VARCHAR(90) NOT NULL, 
@@ -12,30 +30,15 @@ CREATE TABLE pasajero (
     n_p_origen	VARCHAR(20) NOT NULL,
     num_cabina	INTEGER     NOT NULL,
     PRIMARY KEY (id),
-    KEY (n_planeta),
+    KEY (n_p_destino),
     KEY (n_p_origen),
-    CONSTRAINT planetas
-        FOREIGN KEY(n_planeta, n_p_origen)
+    CONSTRAINT planeta
+        FOREIGN KEY(n_p_destino)
         REFERENCES planeta(nombre)
         ON DELETE NO ACTION
-        ON UPDATE CASCADE
-);
-CREATE TABLE planeta (
-    nombre          VARCHAR(20) NOT NULL, 
-    masa            INTEGER     NOT NULL,
-    radio           INTEGER     NOT NULL,
-    nombre_sist  	VARCHAR(20) NOT NULL,
-    elemento_quimico		VARCHAR(20) 	NOT NULL,
-    PRIMARY KEY (nombre),
-    KEY (nombre_sist),
-    CONSTRAINT sistemas
-		FOREIGN KEY(nombre_sist)
-        REFERENCES sistema(nombre)
-		ON DELETE NO ACTION
         ON UPDATE CASCADE,
-	CONSTRAINT compuestos
-		FOREIGN KEY (compuesto)
-        REFERENCES 	compuesto(nombre)
+        FOREIGN KEY(n_p_origen)
+        REFERENCES planeta(nombre)
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
@@ -44,28 +47,38 @@ CREATE TABLE satelite (
     n_sistema  		VARCHAR(20) NOT NULL,
     n_planeta 		VARCHAR(20) NOT NULL,
     PRIMARY KEY (nombre),
-    KEY (n_sistema),
     KEY (n_planeta),
-	CONSTRAINT planeta
-        FOREIGN KEY(n_planeta)
+	CONSTRAINT satelite
+		FOREIGN KEY(n_planeta)
         REFERENCES planeta(nombre)
-        ON DELETE NO ACTION
-        ON UPDATE CASCADE,
-    CONSTRAINT sistemas
-        FOREIGN KEY(n_sistema)
-        REFERENCES sistema(nombre)
-        ON DELETE NO ACTION
-        ON UPDATE CASCADE        
-);
-CREATE TABLE sistema (
-    nombre          VARCHAR(20) UNIQUE NOT NULL,
-	PRIMARY KEY (nombre)
 );
 CREATE TABLE elemento_quimico (
 	nombre			VARCHAR(20) NOT NULL,
     simbolo			VARCHAR(3) NOT NULL,
     num_atomico		INTEGER NOT NULL,
 	PRIMARY KEY (nombre)
+);
+CREATE TABLE compuesto (
+	elemento		VARCHAR(30) NOT NULL,
+    planeta			VARCHAR(30) NOT NULL,
+    KEY (elemento),
+    KEY (planeta),
+    CONSTRAINT elemento_quimico
+		FOREIGN KEY(elemento)
+        REFERENCES elemento_quimico(nombre),
+	CONSTRAINT compuesto
+		FOREIGN KEY(planeta)
+        REFERENCES planeta(nombre)
+);
+CREATE TABLE cubierta (
+	letra		VARCHAR(1) NOT NULL,
+    clase		INTEGER NOT NULL,
+    PRIMARY KEY (letra)
+);
+CREATE TABLE robot (
+	numero 		INTEGER AUTO_INCREMENT,
+    diseño		VARCHAR(30),
+    PRIMARY KEY (numero)
 );
 CREATE TABLE cabina (
 	numero			INTEGER NOT NULL,
@@ -85,29 +98,18 @@ CREATE TABLE cabina (
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE cubierta(
-	letra		VARCHAR(1) NOT NULL,
-    clase		INTEGER NOT NULL,
-    lado		VARCHAR(1) NOT NULL,
-    PRIMARY KEY (letra)
-);
-CREATE TABLE robot(
-	numero 		INTEGER AUTO_INCREMENT,
-    diseño		VARCHAR(30),
-    PRIMARY KEY (numero)
-);
-CREATE TABLE mecanico(
+CREATE TABLE mecanico (
 	id			INTEGER AUTO_INCREMENT,
     nombre		VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
-CREATE TABLE reparacion(
+CREATE TABLE reparacion (
 	num_robot	INTEGER NOT NULL,
     id_m		INTEGER NOT NULL,
     fecha		DATETIME NOT NULL,
     KEY(num_robot, id_m, fecha),
-    CONSTRAINT robot
-		FOREIGN KEY(numero_robot)
+    CONSTRAINT reparacion
+		FOREIGN KEY(num_robot)
         REFERENCES robot(numero)
         ON DELETE NO ACTION
         ON UPDATE CASCADE,
@@ -117,16 +119,16 @@ CREATE TABLE reparacion(
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE zona_entretenimiento(
+CREATE TABLE zona_entretenimiento (
 	nombre		VARCHAR(30) NOT NULL,
     PRIMARY KEY (nombre)
 );
-CREATE TABLE gasto(
+CREATE TABLE gasto (
 	pasajero	INTEGER NOT NULL,
     n_entretenimiento	VARCHAR(30) NOT NULL,
     cantidad	INTEGER NOT NULL,
-    KEY(id, n_entretenimiento),
-    CONSTRAINT zona_entretenimiento
+    KEY(pasajero, n_entretenimiento),
+    CONSTRAINT gasto
 		FOREIGN KEY(n_entretenimiento)
         REFERENCES zona_entretenimiento(nombre)
         ON DELETE NO ACTION
@@ -137,12 +139,12 @@ CREATE TABLE gasto(
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
-CREATE TABLE personal_humano(
+CREATE TABLE personal_humano (
 	id		INTEGER AUTO_INCREMENT,
     nombre	VARCHAR(30) NOT NULL,
     PRIMARY KEY (id)
 );
-CREATE TABLE gestion(
+CREATE TABLE gestion (
 	id_persona	INTEGER NOT NULL,
     entretenimiento		VARCHAR(30) NOT NULL,
     CONSTRAINT zona_entretenimiento
