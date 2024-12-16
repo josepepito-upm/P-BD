@@ -1,5 +1,4 @@
-select num_entretenidos.planeta_natal, num_entretenidos.sistema_natal, tot_pasajeros.pasajeros_nacidos,
-		num_entretenidos.pasajeros_entretenidos
+select num_entretenidos.planeta_natal, num_entretenidos.sistema_natal, tot_pasajeros.pasajeros_nacidos, num_entretenidos.pasajeros_entretenidos
 from (select planeta_natal, sistema_natal, count(*) AS pasajeros_entretenidos
 		from pasajeros
 		where id IN( select pasajero
