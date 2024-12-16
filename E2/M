@@ -11,13 +11,11 @@ BEGIN
     DECLARE pasajeros_destino INT;
     DECLARE porcentaje DECIMAL(10,2);
 
-    SELECT COUNT(*) 
-    INTO total_pasajeros
+    SELECT COUNT(*) INTO total_pasajeros
     FROM pasajeros p JOIN cabinas c ON p.numero_cabina = c.numero
     WHERE c.cubierta = cubierta;
 
-    SELECT COUNT(*) 
-    INTO pasajeros_destino
+    SELECT COUNT(*) INTO pasajeros_destino
     FROM pasajeros p JOIN cabinas c ON p.numero_cabina = c.numero
     WHERE c.cubierta = cubierta AND p.planeta_destino = destino_planeta
 								AND p.sistema_destino = destino_sistema;
